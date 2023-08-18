@@ -6,12 +6,12 @@ A simple thread pool
 Multithread programming, in the general sense, is incredibly hard (at least for my brain).
 There are however a couple of cases in which I don't think the complexity explodes
 
-1. Forgettable threads
+1. **Forgettable threads**:
    For example you start a thread reading from stdin and generating events for the application.
    No direct interaction with global state and no explicit synchronization is needed, you can
    basically start the thread and forget about it.
 
-2. Embarassingly parallel workload sharing
+2. **Embarassingly parallel workload sharing**:
    For example you're writing a raytracer and you divide the image in times and then as many
    threads as reasonable are started each one with a similar task: pick next tile, compute it.
    Synchronization, if needed at all, is conceptually simple... the global state of the program
