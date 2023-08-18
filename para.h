@@ -90,7 +90,6 @@ struct Para {
 
     void run(std::function<void()> f) {
         if (++npara != 1) {
-            --npara;
             f();
         } else {
             done = 0;
@@ -105,8 +104,8 @@ struct Para {
             std::unique_lock<std::mutex> lk(mm);
             wcv.notify_all();
             mcv.wait(lk, [this](){ return done == started; });
-            --npara;
         }
+        --npara;
     }
 
     ~Para() {
