@@ -34,7 +34,7 @@ For example it can be used like:
 
     std::atomic_int gy{0}
     para.run([&](){
-        for (int y=gy++; y<h; y++) {
+        for (int y=gy++; y<h; y=gy++) {
             // process image scanline y
         }
     });
