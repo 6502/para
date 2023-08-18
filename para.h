@@ -30,10 +30,12 @@ SOFTWARE.
 #include <functional>
 #include <thread>
 #include <mutex>
+#include <atomic>
 #include <condition_variable>
 
 struct Para {
-    int npara, started, done;
+    std::atomic_int npara;
+    int started, done;
     std::condition_variable wcv;
 
     std::mutex mm;
