@@ -5,10 +5,9 @@
 #include "para.h"
 
 int main(int argc, const char *argv[]) {
-    Para para;
     std::atomic_int gi{0};
     std::atomic_int tid{0};
-    para.run([&](){
+    Para::run([&](){
         int id = tid++;
         printf("%i: Starting\n", id);
         for (int i=gi++; i<10; i=gi++) {
@@ -20,7 +19,7 @@ int main(int argc, const char *argv[]) {
     printf("-------------------\n");
     gi = 0;
     tid = 0;
-    para.run([&](){
+    Para::run([&](){
         int id = tid++;
         printf("%i: Starting\n", id);
         for (int i=gi++; i<10; i=gi++) {

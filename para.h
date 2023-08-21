@@ -90,7 +90,7 @@ struct Para {
         }
     };
 
-    void run(std::function<void()> f) {
+    void irun(std::function<void()> f) {
         if (++npara != 1) {
             f();
         } else {
@@ -108,6 +108,11 @@ struct Para {
             mcv.wait(lk, [this](){ return done == started; });
         }
         --npara;
+    }
+
+    static void run(std::function<void()> f) {
+        static Para para;
+        para.irun(f);
     }
 
     ~Para() {

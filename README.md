@@ -24,16 +24,16 @@ non reproducible; also logic bugs in multithreading can go unnoticed for years i
 
 ## how
 
-To handle use case 2 this library introduces just one class `Para`. At instantiation it creates
+To handle use case 2 this library introduces just one class `Para`. At first use it creates
 a pool of workers that are waiting for something to do.
 
-The method `void Para::run(std::function<void()>f)` just starts all workers on calling `f`; when
-function return from all workers, call to `run` returns.
+The static method `void Para::run(std::function<void()>f)` just starts all workers on calling `f`;
+when function return from all workers, call to `run` returns.
 
 Example usage
 
     std::atomic_int gy{0}
-    para.run([&](){
+    Para::run([&](){
         for (int y=gy++; y<h; y=gy++) {
             // process image scanline y
         }
