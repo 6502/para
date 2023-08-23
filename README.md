@@ -27,14 +27,16 @@ non reproducible; also logic bugs in multithreading can go unnoticed for years i
 To handle use case 2 this library introduces just one class `Para`. At first use it creates
 a pool of workers that are waiting for something to do.
 
-The static method `void Para::run(std::function<void()>f)` just starts all workers on calling `f`;
-when function return from all workers, call to `run` returns.
+The static method `void Para::run(std::function<void(int i, int n)>f)` just starts all workers on calling `f`;
+and passing the worker index and the total number of workers (those parameters in some cases simplifiy
+work subdivision without need of synchronization - like scanlines in an image).
 
-Example usage
+When function return from all workers, call to `run` returns.
 
-    std::atomic_int gy{0}
-    Para::run([&](){
-        for (int y=gy++; y<h; y=gy++) {
+## example usage
+
+    Para::run([&](int i, int n){
+        for (int y=i*height/n, y1=(i+1)*height/n; y<y1; y++) {
             // process image scanline y
         }
     });
@@ -42,6 +44,6 @@ Example usage
 # Warning
 
 It's important to note that while efforts have been made to ensure the correctness of this
-implementation, it's not guaranteed to be bug-free. The complexities of multithreading can
-lead to unexpected issues that might not be immediately apparent, even when using tools like
-thread and address sanitizers.
+implementation and that I don't know of any bug, it's not guaranteed to be bug-free.
+The complexities of multithreading can lead to unexpected issues that might not be
+immediately apparent, even when using tools like thread and address sanitizers.

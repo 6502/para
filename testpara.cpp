@@ -5,28 +5,23 @@
 #include "para.h"
 
 int main(int argc, const char *argv[]) {
-    std::atomic_int gi{0};
-    std::atomic_int tid{0};
-    Para::run([&](){
-        int id = tid++;
-        printf("%i: Starting\n", id);
-        for (int i=gi++; i<10; i=gi++) {
+    std::atomic_int gj{0};
+    Para::run([&](int i, int n){
+        printf("%i: Starting\n", i);
+        for (int j=gj++; j<10; j=gj++) {
             sleep(1);
-            printf("%i: Done (%i)\n", id, i);
+            printf("%i: Done (%i)\n", i, j);
         }
-        printf("%i: Stopping\n", id);
+        printf("%i: Stopping\n", i);
     });
     printf("-------------------\n");
-    gi = 0;
-    tid = 0;
-    Para::run([&](){
-        int id = tid++;
-        printf("%i: Starting\n", id);
-        for (int i=gi++; i<10; i=gi++) {
+    Para::run([&](int i, int n){
+        printf("%i: Starting\n", i);
+        for (int j=10*i/n,j1=10*(i+1)/n; j<j1; j++) {
             sleep(1);
-            printf("%i: Done (%i)\n", id, i);
+            printf("%i: Done (%i)\n", i, j);
         }
-        printf("%i: Stopping\n", id);
+        printf("%i: Stopping\n", i);
     });
 
     return 0;

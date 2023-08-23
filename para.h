@@ -44,11 +44,11 @@ struct Para {
     struct Worker;
     std::vector<Worker *> workers;
 
-    std::function<void()> f;
+    std::function<void(int i, int n)> f;
 
     Para() : npara(0) {
-        for (int i=0; i<int(std::thread::hardware_concurrency()); i++) {
-            workers.push_back(new Worker(this));
+        for (int i=0, n=int(std::thread::hardware_concurrency()); i<n; i++) {
+            workers.push_back(new Worker(this, i, n));
         }
     }
 
@@ -62,8 +62,9 @@ struct Para {
         enum { Idle, Ready, Running, Stopping, Stopped } state;
         std::mutex m;
         std::thread t;
+        int i, n;
 
-        Worker(Para *para) : para(para), state(Idle) {
+        Worker(Para *para, int i, int n) : para(para), state(Idle), i(i), n(n) {
             t = std::thread([this](){ run(); });
         }
 
@@ -80,7 +81,7 @@ struct Para {
                     break;
                 }
                 state = Running;
-                para->f();
+                para->f(i, n);
                 state = Idle;
                 std::lock_guard<std::mutex> g(para->mm);
                 if (++para->done == para->started) {
@@ -90,9 +91,9 @@ struct Para {
         }
     };
 
-    void irun(std::function<void()> f) {
+    void irun(std::function<void(int i, int n)> f) {
         if (++npara != 1) {
-            f();
+            f(0, 1);
         } else {
             done = 0;
             this->f = f;
@@ -110,9 +111,13 @@ struct Para {
         --npara;
     }
 
-    static void run(std::function<void()> f) {
+    static Para& instance() {
         static Para para;
-        para.irun(f);
+        return para;
+    }
+
+    static void run(std::function<void(int i, int n)> f) {
+        instance().irun(f);
     }
 
     ~Para() {
