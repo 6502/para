@@ -12,7 +12,7 @@ There are however a couple of cases in which I don't think the complexity explod
    basically start the thread and forget about it.
 
 2. **Embarrassingly parallel workload**:
-   For example you're writing a raytracer and you divide the image in times and then as many
+   For example you're writing a raytracer and you divide the image in tiles and then as many
    threads as reasonable are started each one with a similar task: pick next tile, compute it.
    Synchronization, if needed at all, is trivial (e.g. acquiring a mutex to store the result
    in a shared container). Parallelism is used massively, but only around a specific task.
